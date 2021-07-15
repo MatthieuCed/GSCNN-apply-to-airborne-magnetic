@@ -22,7 +22,7 @@ original code from : https://github.com/nv-tlabs/GSCNN
  
  ### Training
  
- Open Train_GSCNN.ipynb
+ Open run_GSCNN.ipynb
  Change the config.py to correspond to jthe files at your location
  
 
