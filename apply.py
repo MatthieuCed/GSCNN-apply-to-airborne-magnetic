@@ -63,7 +63,8 @@ def assp_all(data, net, path):
         np.save(f2, segt.max(1)[1][0].cpu().numpy())
         np.save(f3, edget.max(1)[0][0].cpu().numpy())
         
-        torch.cuda.empty_cache()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
      
     f1.close() 
     f2.close() 
@@ -108,7 +109,9 @@ def gate_all(data, net, path):
         np.save(f2, dsn4.cpu().numpy()[0, 0, :, :])
         np.save(f3, dsn7.cpu().numpy()[0, 0, :, :])
         
-        torch.cuda.empty_cache()
+        
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
      
     f1.close() 
     f2.close() 
