@@ -34,7 +34,11 @@ def return_acmap(net, layer, input):
     en fonction de l'entrée (input)'
     """
     outputs = []  
-    input_cuda = input.cuda()    
+    
+    if torch.cuda.is_available():
+        input_cuda = input.cuda()    
+    else:
+        input_cuda = input   
     
     def hook(module, input, output):
         outputs.append(output)        
@@ -240,10 +244,11 @@ def load_trained_model(args):
     writer = prep_experiment(args,parser)
     #train_loader, val_loader, train_obj = datasets.setup_loaders(args)
     args.dataset_cls = syntmag
-    criterion, criterion_val = None#loss.get_loss(args)
+    criterion, criterion_val = loss.get_loss(args)
     net = network.get_net(args, criterion)    
     optim, scheduler = optimizer.get_optimizer(args, net)
-    torch.cuda.empty_cache()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     net.eval()
     
     return net
