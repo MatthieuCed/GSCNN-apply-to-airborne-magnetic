@@ -18,6 +18,12 @@ def get_net(args, criterion):
     net = torch.nn.DataParallel(net)
     return net
 
+def get_net_use(args):
+    print('num class : ', args.dataset_cls.num_classes)
+    net = get_model(network=args.arch, num_classes=args.dataset_cls.num_classes,
+                    criterion=None, trunk=args.trunk)
+    return net
+
 def get_model(network, num_classes, criterion, trunk):
     
     module = network[:network.rfind('.')]

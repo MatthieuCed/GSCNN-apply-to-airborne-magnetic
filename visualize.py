@@ -25,6 +25,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import skimage.measure
+import datasets
 
 def return_acmap(net, layer, input):
     """
@@ -237,11 +238,11 @@ def load_trained_model(args):
     changer les args pour charger un modèle entrainé
     """
     writer = prep_experiment(args,parser)
-    # train_loader, val_loader, train_obj = datasets.setup_loaders(args)
+    #train_loader, val_loader, train_obj = datasets.setup_loaders(args)
     args.dataset_cls = syntmag
     criterion, criterion_val = None#loss.get_loss(args)
     net = network.get_net(args, criterion)    
-    #optim, scheduler = optimizer.get_optimizer(args, net)
+    optim, scheduler = optimizer.get_optimizer(args, net)
     torch.cuda.empty_cache()
     net.eval()
     
