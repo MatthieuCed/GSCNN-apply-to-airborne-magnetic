@@ -168,7 +168,7 @@ def get_net_use(args):
     
     return net
 
-def perpare_net(weight_path, name):
+def prepare_net(weight_path, name):
   #name += '.pth'
   import_gdown(weight_path, name)
   output_path = '/content/GSCNN-apply-to-airborne-magnetic/{}'.format(name)
