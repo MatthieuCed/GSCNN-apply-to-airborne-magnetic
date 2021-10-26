@@ -17,6 +17,10 @@ import visualize
 import apply
 from train import args
 import time
+from network import get_model
+from datasets import syntmag
+from optimizer import restore_snapshot
+
 
 def plot_graphic(image, cmap = 'Paired', vmin = False): 
   plt.figure(figsize=(20, 10), dpi=80)
@@ -155,3 +159,55 @@ def import_tiff(path, name = 'temp'):
     raise ValueError('the file contains NoData values')
 
   return image
+
+
+def get_net_use(args):
+    print('num class : ', args.dataset_cls.num_classes)
+    net = get_model(network=args.arch, num_classes=args.dataset_cls.num_classes,
+                    criterion=None, trunk=args.trunk)
+    
+    return net
+
+def perpare_net(weight_path, name):
+  #name += '.pth'
+  import_gdown(weight_path, name)
+  output_path = '/content/GSCNN-apply-to-airborne-magnetic/{}'.format(name)
+
+  #prepare net
+  args.dataset_cls=syntmag
+  args.snapshot = output_path
+
+  #load model and weights
+  if torch.cuda.is_available():
+    net = apply.load_trained_model(args)
+  else:
+    net = get_net_use(args)
+    net, _ = restore_snapshot(args, net, None, output_path)
+
+  return net
+
+def get_image_trans(net, image, mean_std = None):
+  """
+  fonction pour obtenir toutes les transformations depuis une image
+  et les enregistrer localement
+  """
+  #transform data - add conditions depending of the used model
+  if 'mean_std' not in locals():
+      image = (image-image.min())/(image.max()-image.min())
+      mean = np.mean(image)
+      std = np.std(image)
+      mean_std = ([mean, mean, mean],[std, std, std])
+  elif type(mean_std)!= tuple:
+      image = (image-image.min())/(image.max()-image.min())
+      mean = np.mean(image)
+      std = np.std(image)
+      mean_std = ([mean, mean, mean],[std, std, std])
+
+  img = numpy_pil(image)
+  data = transform_im(img, mean_std)
+
+  #apply aspp (get seg, edge, aspp in local)
+  apply.assp_all([data], net, '') 
+
+  #get gates 
+  apply.gate_all([data], net, '')
