@@ -197,9 +197,13 @@ def aspp_output(net, img):
     """
     obtenir les sorties de la couche de aspp
     """
+    if type(net) == torch.nn.parallel.data_parallel.DataParallel:
+        module = net.module
+    elif type(net) == network.gscnn.GSCNN:
+        module = net   
     
-    result1, seg_out, edge_out = return_acmap(net, net.module.bot_fine, img)
-    result2, seg_out, edge_out = return_acmap(net, net.module.bot_aspp, img)
+    result1, seg_out, edge_out = return_acmap(net, module.bot_fine, img)
+    result2, seg_out, edge_out = return_acmap(net, module.bot_aspp, img)
     result2 = F.interpolate(result2, result1.size()[2:], mode='bicubic',align_corners=True)
 
     vals = torch.cat([result1, result2], 1)
