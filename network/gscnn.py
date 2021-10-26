@@ -297,7 +297,10 @@ class GSCNN(nn.Module):
         
         for i in range(x_size[0]):
             canny[i] = cv2.Canny(im_arr[i],15,15)
-        canny = torch.from_numpy(canny).cuda().float()
+        if torch.cuda.is_available():
+            canny = torch.from_numpy(canny).cuda().float()
+        else:
+            canny = torch.from_numpy(canny).float()
 
         #on définit le shape stream
         cs = self.res1(m1f)
