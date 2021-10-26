@@ -197,9 +197,9 @@ def aspp_output(net, img):
     """
     obtenir les sorties de la couche de aspp
     """
-    if type(net) == torch.nn.parallel.data_parallel.DataParallel:
+    if torch.cuda.is_available():
         module = net.module
-    elif type(net) == network.gscnn.GSCNN:
+    else:
         module = net   
     
     result1, seg_out, edge_out = return_acmap(net, module.bot_fine, img)
