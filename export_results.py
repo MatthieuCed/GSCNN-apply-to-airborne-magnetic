@@ -211,3 +211,32 @@ def get_image_trans(net, image, mean_std = None):
 
   #get gates 
   apply.gate_all([data], net, '')
+  
+def clustering_output(border = 16, 
+                      res = 1,
+                      lim = 0.95,
+                      cmap = 'tab20',
+                      n_clusters = 8,
+                      hclust = False,
+                      kmean = True):
+  """
+  fonction pour faire un clsutering
+  """
+  data_temp = apply.load_npy('_assp.npy')
+  _, x, y = visualize.prepare_data2cluster(data_temp[0], border=border, res=res)
+
+  if hclust:
+    clust = visualize.hclustering_output(data_temp[0],
+                                        n_clusters = n_clusters,
+                                        distance_threshold=None,
+                                        border = border,
+                                        res = res,
+                                        lim = lim)
+  elif kmean:
+    clust = visualize.kclustering_output(data_temp[0],
+                                        n_clusters,
+                                        border=border,
+                                        lim=lim,
+                                        res=res)
+
+  plot_graphic(clust.reshape(x, y), cmap = cmap)
