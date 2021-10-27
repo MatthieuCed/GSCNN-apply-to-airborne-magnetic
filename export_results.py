@@ -23,6 +23,8 @@ from network import get_model
 from datasets import syntmag
 from optimizer import restore_snapshot
 
+images = []
+
 qualitative = ['Paired', 'Pastel1', 'Pastel2', 'Accent',
                'Dark2', 'Set1', 'Set2', 'Set3',
                'tab10', 'tab20', 'tab20b', 'tab20c']
@@ -389,8 +391,7 @@ def display_gscnn_outputs():
     display(btn)
   display_menu()
   
-def import_image(images_in):
-  global images
+def import_image(images_in):  
     
   btn = wid.Button(description='Get Image')
 
