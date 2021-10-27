@@ -389,7 +389,7 @@ def display_gscnn_outputs():
     display(btn)
   display_menu()
   
-def import_image():
+def import_image(images):
   btn = wid.Button(description='Get Image')
 
   image_link = wid.Textarea(
@@ -411,7 +411,7 @@ def import_image():
     image = import_tiff(image_link.value, name.value)
     #afficher l'image
     plot_graphic(image, cmap = color_m.value)
-    globals()['images'].append(name.value)
+    images.append(name.value)
 
   btn.on_click(import_image)
   display(wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image partagée'))
@@ -420,3 +420,5 @@ def import_image():
   display(name)
   display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
   display(btn)
+  
+  return list(dict.fromkeys(images))
