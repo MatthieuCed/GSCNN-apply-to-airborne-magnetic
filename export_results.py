@@ -389,7 +389,9 @@ def display_gscnn_outputs():
     display(btn)
   display_menu()
   
-def import_image(images):
+def import_image(images_in):
+  global images
+    
   btn = wid.Button(description='Get Image')
 
   image_link = wid.Textarea(
@@ -411,8 +413,9 @@ def import_image(images):
     image = import_tiff(image_link.value, name.value)
     #afficher l'image
     plot_graphic(image, cmap = color_m.value)
-    images.append(name.value)
-    return list(dict.fromkeys(images))
+    images_in.append(name.value)
+    images = list(dict.fromkeys(images_in))
+
 
   btn.on_click(import_image)
   display(wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image partagée'))
