@@ -412,6 +412,7 @@ def import_image(images):
     #afficher l'image
     plot_graphic(image, cmap = color_m.value)
     images.append(name.value)
+    return list(dict.fromkeys(images))
 
   btn.on_click(import_image)
   display(wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image partagée'))
@@ -420,5 +421,4 @@ def import_image(images):
   display(name)
   display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
   display(btn)
-  
-  return list(dict.fromkeys(images))
+ 
