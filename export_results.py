@@ -13,7 +13,7 @@ import torch
 import gdown
 import gdal
 import ipywidgets as wid
-from IPython.display import display
+from IPython.display import display, clear_output
 
 import visualize
 import apply
@@ -23,6 +23,24 @@ from network import get_model
 from datasets import syntmag
 from optimizer import restore_snapshot
 
+qualitative = ['Paired', 'Pastel1', 'Pastel2', 'Accent',
+               'Dark2', 'Set1', 'Set2', 'Set3',
+               'tab10', 'tab20', 'tab20b', 'tab20c']
+
+diverging = ['Spectral', 'PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu',
+            'RdYlBu', 'RdYlGn', 'coolwarm', 'bwr', 'seismic']
+
+pusc = ['viridis', 'plasma', 'inferno', 'magma', 'cividis']
+
+sequential = [
+            'Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds',
+            'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu',
+            'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']
+
+sequential_2 = [
+            'binary', 'gist_yarg', 'gist_gray', 'gray', 'bone', 'pink',
+            'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
+            'hot', 'afmhot', 'gist_heat', 'copper']
 
 def plot_graphic(image, cmap = 'Paired', vmin = False): 
   plt.figure(figsize=(20, 10), dpi=80)
@@ -267,9 +285,7 @@ def clustering_mapping():
     hclust, kmean = False, True
 
   #choose cluster type
-  drp_clu_cmap = wid.Dropdown(options = ['tab20', 'tab20b', 'tab20c', 'Pastel1',
-                                          'Pastel2', 'Paired', 'Accent', 'Dark2',
-                                          'Set1', 'Set2', 'Set3', 'tab10'], description='Colormap :') 
+  drp_clu_cmap = wid.Dropdown(options = qualitative, description='Colormap :') 
 
   #choose borders
   sld_brd = wid.IntSlider(
@@ -314,10 +330,93 @@ def clustering_mapping():
 
   #create the interface
   display(wid.Label(value="Clustering Mapping | Carte par Regroupement"))
-  display(wid.HBox([drp_clu_typ, wid.Label(value="choose the clustering algorithm| choisissez l'algorithme de regroupement")]))
+  display(wid.HBox([drp_clu_typ, wid.Label(value="choose the clustering algorithm | choisissez l'algorithme de regroupement")]))
   display(wid.HBox([sld_clu, wid.Label(value="choose the number of clusters | choisissez le nombre de groupes")]))
   display(wid.HBox([sld_pca, wid.Label(value="choose PCA reduction [explanation bellow] | choisissez la réduction en PCA [explication ci-dessous]")]))
   display(wid.HBox([sld_res, wid.Label(value="choose output resolution [explanation bellow] | choisissez la résolution de sortie [explication ci-dessous]")]))
   display(wid.HBox([sld_brd, wid.Label(value="choose the border crop [explanation bellow] | choisissez la réduction des bordures [explication ci-dessous]")]))
   display(wid.HBox([drp_clu_cmap, wid.Label(value="choose the colormap | choisissez la carte des couleurs")]))
+  display(btn)
+
+def display_gscnn_outputs():
+  def create_checkbox_colormap(description, cmap):
+    ch = wid.Checkbox(
+        value=False,
+        description=description,
+        disabled=False,
+        indent=False)
+    
+    dp = wid.Dropdown(options = cmap, description='Colormap :') 
+
+    return ch, dp
+
+  btn = wid.Button(description='Outputs')
+
+  #selection outputs
+  ch_seg, cmap_seg = create_checkbox_colormap('segmentation', qualitative)
+  ch_brd, cmap_brd = create_checkbox_colormap('borders', ['gray', 'binary'])
+
+  #selection gate 
+  cmap = diverging + pusc + sequential +sequential_2
+  ch_g1, cmap_g1 = create_checkbox_colormap('gate 1', cmap)
+  ch_g2, cmap_g2 = create_checkbox_colormap('gate 2', cmap)
+  ch_g3, cmap_g3 = create_checkbox_colormap('gate 3', cmap)
+
+  def display_outputs(obj): 
+    clear_output()
+    display_menu()
+    #create lists
+    disp = [ch_seg.value, ch_brd.value, ch_g1.value, ch_g2.value, ch_g3.value]
+    data = ['_seg.npy', '_edge.npy', '_gate1.npy', '_gate2.npy', '_gate3.npy']
+    cmap = [cmap_seg.value, cmap_brd.value, cmap_g1.value, cmap_g2.value, cmap_g3.value]
+    for i, j, k in zip(data, cmap, disp):
+      if k:
+        data_temp = apply.load_npy(i)
+        plot_graphic(data_temp[0], cmap = j)
+
+  #button
+  btn.on_click(display_outputs)
+
+  #display
+  def display_menu():
+    display(wid.Label('Algorithm Outputs | Sortie de l\'Algorithme'))
+    display(wid.HBox([ch_seg, cmap_seg]))
+    display(wid.HBox([ch_brd, cmap_brd]))
+    display(wid.Label('Deep representations | Représentations profonde'))
+    display(wid.HBox([ch_g1, cmap_g1]))
+    display(wid.HBox([ch_g2, cmap_g2]))
+    display(wid.HBox([ch_g3, cmap_g3]))
+    display(btn)
+  display_menu()
+  
+def import_image():
+  btn = wid.Button(description='Get Image')
+
+  image_link = wid.Textarea(
+      value='https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing',
+      placeholder='right the google drive link of the image you want to load',
+      description='GDrive link:',
+      disabled=False)
+
+  name = wid.Textarea(
+      value='original',
+      placeholder='Name your image',
+      description='image name',
+      disabled=False)
+
+  cmap = ['jet'] + pusc + diverging + sequential + sequential_2
+  color_m = wid.Dropdown(options = cmap, description='Colormap :') 
+
+  def import_image(obj):
+    image = import_tiff(image_link.value, name.value)
+    #afficher l'image
+    plot_graphic(image, cmap = color_m.value)
+    globals()['images'].append(name.value)
+
+  btn.on_click(import_image)
+  display(wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image partagée'))
+  display(image_link)
+  display(wid.Label('Name the image to import || Nommez l\'image à importer'))
+  display(name)
+  display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
   display(btn)
