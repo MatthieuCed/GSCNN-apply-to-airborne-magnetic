@@ -12,6 +12,8 @@ import torchvision.transforms as standard_transforms
 import torch
 import gdown
 import gdal
+import ipywidgets as wid
+from IPython.display import display
 
 import visualize
 import apply
@@ -240,3 +242,82 @@ def clustering_output(border = 16,
                                         res=res)
 
   plot_graphic(clust.reshape(x, y), cmap = cmap)
+  
+
+def clustering_mapping():
+  """
+  fonction pour afficher les widgets de la carte par regroupement
+  """
+  #button
+  btn = wid.Button(description='Clustering')
+
+  #nb of clusters
+  sld_clu = wid.IntSlider(
+      min=2,
+      max=30,
+      step=1,
+      description='Clusters :',
+      value=10)
+
+  #choose cluster type
+  drp_clu_typ = wid.Dropdown(options = ['hierarchical clustering', 'k means'], description='Clustering :') 
+  if drp_clu_typ.value == 'hierarchical clustering':
+    hclust, kmean = True, False
+  elif drp_clu_typ.value == 'k means':
+    hclust, kmean = False, True
+
+  #choose cluster type
+  drp_clu_cmap = wid.Dropdown(options = ['tab20', 'tab20b', 'tab20c', 'Pastel1',
+                                          'Pastel2', 'Paired', 'Accent', 'Dark2',
+                                          'Set1', 'Set2', 'Set3', 'tab10'], description='Colormap :') 
+
+  #choose borders
+  sld_brd = wid.IntSlider(
+            min=0,
+            max=32,
+            step=2,
+            description='Borders :',
+            value=16)
+
+  #choose borders
+  sld_res = wid.IntSlider(
+            min=1,
+            max=2,
+            step=1,
+            description='Resolution :',
+            value=1)
+
+  ##choose PCA
+  sld_pca = wid.IntSlider(
+            min=50,
+            max=100,
+            step=2,
+            description='% PCA :',
+            value=96)
+  if sld_pca.value == 1:
+    pca=None
+  else:
+    pca=sld_pca.value/100
+
+  #fonction clustering
+  def clustering_fonction(obj):
+      clustering_output(border = sld_brd.value,
+                          res = sld_res.value,
+                          lim = pca,
+                          cmap = drp_clu_cmap.value,
+                          n_clusters = sld_clu.value,
+                          hclust = hclust,
+                          kmean = kmean)
+
+  #action du boutton
+  btn.on_click(clustering_fonction)
+
+  #create the interface
+  display(wid.Label(value="Clustering Mapping | Carte par Regroupement"))
+  display(wid.HBox([drp_clu_typ, wid.Label(value="choose the clustering algorithm| choisissez l'algorithme de regroupement")]))
+  display(wid.HBox([sld_clu, wid.Label(value="choose the number of clusters | choisissez le nombre de groupes")]))
+  display(wid.HBox([sld_pca, wid.Label(value="choose PCA reduction [explanation bellow] | choisissez la réduction en PCA [explication ci-dessous]")]))
+  display(wid.HBox([sld_res, wid.Label(value="choose output resolution [explanation bellow] | choisissez la résolution de sortie [explication ci-dessous]")]))
+  display(wid.HBox([sld_brd, wid.Label(value="choose the border crop [explanation bellow] | choisissez la réduction des bordures [explication ci-dessous]")]))
+  display(wid.HBox([drp_clu_cmap, wid.Label(value="choose the colormap | choisissez la carte des couleurs")]))
+  display(btn)
