@@ -323,6 +323,8 @@ def clustering_mapping():
 
   #fonction clustering
   def clustering_fonction(obj):
+      clear_output()
+      display_menu()
       clustering_output(border = sld_brd.value,
                           res = sld_res.value,
                           lim = pca,
@@ -333,16 +335,19 @@ def clustering_mapping():
 
   #action du boutton
   btn.on_click(clustering_fonction)
+  
+  def display_menu():
+      #create the interface
+      display(wid.Label(value="Clustering Mapping | Carte par Regroupement"))
+      display(wid.HBox([drp_clu_typ, wid.Label(value="choose the clustering algorithm | choisissez l'algorithme de regroupement")]))
+      display(wid.HBox([sld_clu, wid.Label(value="choose the number of clusters | choisissez le nombre de groupes")]))
+      display(wid.HBox([sld_pca, wid.Label(value="choose PCA reduction [explanation bellow] | choisissez la réduction en PCA [explication ci-dessous]")]))
+      display(wid.HBox([sld_res, wid.Label(value="choose output resolution [explanation bellow] | choisissez la résolution de sortie [explication ci-dessous]")]))
+      display(wid.HBox([sld_brd, wid.Label(value="choose the border crop [explanation bellow] | choisissez la réduction des bordures [explication ci-dessous]")]))
+      display(wid.HBox([drp_clu_cmap, wid.Label(value="choose the colormap | choisissez la carte des couleurs")]))
+      display(btn)
 
-  #create the interface
-  display(wid.Label(value="Clustering Mapping | Carte par Regroupement"))
-  display(wid.HBox([drp_clu_typ, wid.Label(value="choose the clustering algorithm | choisissez l'algorithme de regroupement")]))
-  display(wid.HBox([sld_clu, wid.Label(value="choose the number of clusters | choisissez le nombre de groupes")]))
-  display(wid.HBox([sld_pca, wid.Label(value="choose PCA reduction [explanation bellow] | choisissez la réduction en PCA [explication ci-dessous]")]))
-  display(wid.HBox([sld_res, wid.Label(value="choose output resolution [explanation bellow] | choisissez la résolution de sortie [explication ci-dessous]")]))
-  display(wid.HBox([sld_brd, wid.Label(value="choose the border crop [explanation bellow] | choisissez la réduction des bordures [explication ci-dessous]")]))
-  display(wid.HBox([drp_clu_cmap, wid.Label(value="choose the colormap | choisissez la carte des couleurs")]))
-  display(btn)
+  display_menu()
 
 def display_gscnn_outputs():
   def create_checkbox_colormap(description, cmap):
