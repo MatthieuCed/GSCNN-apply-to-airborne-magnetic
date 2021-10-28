@@ -441,6 +441,7 @@ def import_image(images_in):
   def display_menu():
       display(wid.Label('Import an image to work on || Importez une image de travail'))
       display(wid.HBox([pre_im, btn2, wid.Label('predefined testing images || images test prédéfinies')]))
+      display(wid.Label('or download your own image || ou téléchargez votre image'))
       display(wid.HBox([image_link, wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image .tiff partagée')]))
       display(wid.HBox([name, wid.Label('Name the image to import || Nommez l\'image à importer')]))
       display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
@@ -461,4 +462,23 @@ def load_net():
   btn.on_click(load_weigth)
 
   display(wid.HBox([wgh,wid.Label('load pretrained weights to run the model')]))
+  display(btn)
+  
+
+def obtain_values():
+  #select image
+  dd_im = wid.Dropdown(options = images, description='Image') 
+
+  #select weights
+  dd_net = wid.Dropdown(options = nets.keys(), description='Model') 
+    
+  #add standard deviation
+  def prepare_values(obj):
+    get_image_trans(nets[dd_net.value], dd_im.value, mean_std = None)
+
+  btn = wid.Button(description='Process Image')
+  btn.on_click(prepare_values)
+
+  display(wid.Label('Choose an image and a model to process it || Choisissez une image et un modèle pour la transformer'))
+  display(wid.HBox([dd_im, dd_net]))
   display(btn)
