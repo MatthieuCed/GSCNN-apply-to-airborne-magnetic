@@ -428,16 +428,25 @@ def import_image(images_in):
   pre_im = wid.Dropdown(options = preload_image_path.keys(), description='Test Images :') 
   
   def pre_image(obj):
-    image_link.value
+    #change the values
+    image_link.value = preload_image_path[pre_im.value]
+    name.value = pre_im.value
+    #display menu
+    clear_output()
+    display_menu()
+    
+  btn2 = wid.Button(description='Test Image')
+  btn2.on_click(pre_image)
   
   def display_menu():
       display(wid.Label('Import an image to work on || Importez une image de travail'))
+      display(wid.HBox([pre_im, btn2, wid.Label('predefined testing images || images test prédéfinies')]))
       display(wid.HBox([image_link, wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image .tiff partagée')]))
       display(wid.HBox([name, wid.Label('Name the image to import || Nommez l\'image à importer')]))
       display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
       display(btn)
   
-  display()
+  display_menu()
  
 def load_net():
   btn = wid.Button(description='Load')           
