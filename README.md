@@ -1,11 +1,11 @@
 # GSCNN APPLIED TO MAGNETIC DATA
 
 original code from : https://github.com/nv-tlabs/GSCNN
-(Towaki Takikawa, David Acuna, Varun Jampani, Sanja Fidler : [Paper](https://arxiv.org/abs/1907.05740)])
+(Towaki Takikawa, David Acuna, Varun Jampani, Sanja Fidler : [Paper](https://arxiv.org/abs/1907.05740)]).
 
-our implementation and the description of the data augmentation process is available [in Arxiv](http://arxiv.org/abs/2110.14440)
+The description of our implementation and the data augmentation workflow is available [in Arxiv](http://arxiv.org/abs/2110.14440)
 
-an interface to apply the code to airborne magnetic data is available on [Google Colab](https://colab.research.google.com/drive/1YHyJ1xAbIyEgzEL--srEbJXj-qLMpsgc?usp=sharing)
+An interface to apply the code to airborne magnetic data is available on [Google Colab](https://colab.research.google.com/drive/1YHyJ1xAbIyEgzEL--srEbJXj-qLMpsgc?usp=sharing)
 
 ### Download datas (pretrained weights and database)
 
