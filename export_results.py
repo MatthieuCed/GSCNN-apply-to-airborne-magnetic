@@ -316,7 +316,7 @@ def clustering_mapping():
             step=2,
             description='% PCA :',
             value=96)
-  if sld_pca.value == 1:
+  if sld_pca.value == 100:
     pca=None
   else:
     pca=sld_pca.value/100
@@ -325,6 +325,9 @@ def clustering_mapping():
   def clustering_fonction(obj):
       clear_output()
       display_menu()
+      print('pca = %s'%pca)
+      print('clu = %s'%drp_clu_typ)
+      
       clustering_output(border = sld_brd.value,
                           res = sld_res.value,
                           lim = pca,
