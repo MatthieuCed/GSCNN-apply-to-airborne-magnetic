@@ -24,6 +24,10 @@ from datasets import syntmag
 from optimizer import restore_snapshot
 
 images = []
+nets = {}
+
+preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing'}
+weight_path = {'weight_syntmag' : 'https://drive.google.com/file/d/1hHFL1Kkex_AdDCHo-Uo0U_kaoBUH0Xsq/view?usp=sharing'}
 
 qualitative = ['Paired', 'Pastel1', 'Pastel2', 'Accent',
                'Dark2', 'Set1', 'Set2', 'Set3',
@@ -413,16 +417,39 @@ def import_image(images_in):
   def import_image(obj):
     image = import_tiff(image_link.value, name.value)
     #afficher l'image
+    clear_output()
+    display_menu()
     plot_graphic(image, cmap = color_m.value)
     images_in.append(name.value)
     images = list(dict.fromkeys(images_in))
 
-
   btn.on_click(import_image)
-  display(wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image partagée'))
-  display(image_link)
-  display(wid.Label('Name the image to import || Nommez l\'image à importer'))
-  display(name)
-  display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
-  display(btn)
+  
+  pre_im = wid.Dropdown(options = preload_image_path.keys(), description='Test Images :') 
+  
+  def pre_image(obj):
+    image_link.value
+  
+  def display_menu():
+      display(wid.Label('Import an image to work on || Importez une image de travail'))
+      display(wid.HBox([image_link, wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image .tiff partagée')]))
+      display(wid.HBox([name, wid.Label('Name the image to import || Nommez l\'image à importer')]))
+      display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
+      display(btn)
+  
+  display()
  
+def load_net():
+  btn = wid.Button(description='Load')           
+  wgh = wid.Dropdown(options = weight_path.keys(), description='Weights') 
+
+  path = weight_path[wgh.value]
+
+  def load_weigth(obj):
+    net = prepare_net(path, wgh.value)
+    nets[wgh.value] = net
+
+  btn.on_click(load_weigth)
+
+  display(wid.HBox([wgh,wid.Label('load pretrained weights to run the model')]))
+  display(btn)
