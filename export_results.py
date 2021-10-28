@@ -454,7 +454,7 @@ def load_net():
   wgh = wid.Dropdown(options = weight_path.keys(), description='Weights') 
 
   def load_weigth(obj):
-      print('test : ' + weight_path[wgh.value])
+    print('test : ' + weight_path[wgh.value])
     net = prepare_net(weight_path[wgh.value], wgh.value)
     nets[wgh.value] = net
 
