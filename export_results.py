@@ -453,10 +453,9 @@ def load_net():
   btn = wid.Button(description='Load')           
   wgh = wid.Dropdown(options = weight_path.keys(), description='Weights') 
 
-  path = weight_path[wgh.value]
-
   def load_weigth(obj):
-    net = prepare_net(path, wgh.value)
+      print('test : ' + weight_path[wgh.value])
+    net = prepare_net(weight_path[wgh.value], wgh.value)
     nets[wgh.value] = net
 
   btn.on_click(load_weigth)
@@ -464,7 +463,6 @@ def load_net():
   display(wid.HBox([wgh,wid.Label('load pretrained weights to run the model')]))
   display(btn)
   
-
 def obtain_values():
   #select image
   dd_im = wid.Dropdown(options = images, description='Image') 
