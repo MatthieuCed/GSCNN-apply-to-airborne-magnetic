@@ -23,7 +23,7 @@ from network import get_model
 from datasets import syntmag
 from optimizer import restore_snapshot
 
-images = []
+images = {}
 nets = {}
 
 preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing'}
@@ -416,12 +416,14 @@ def import_image(images_in):
 
   def import_image(obj):
     image = import_tiff(image_link.value, name.value)
+    
     #afficher l'image
     clear_output()
     display_menu()
     plot_graphic(image, cmap = color_m.value)
-    images_in.append(name.value)
-    images = list(dict.fromkeys(images_in))
+    
+    #l'enregistrer
+    images[name.value]=image
 
   btn.on_click(import_image)
   
@@ -454,7 +456,6 @@ def load_net():
   wgh = wid.Dropdown(options = weight_path.keys(), description='Weights') 
 
   def load_weigth(obj):
-    print('test : ' + weight_path[wgh.value])
     net = prepare_net(weight_path[wgh.value], wgh.value)
     nets[wgh.value] = net
 
@@ -465,14 +466,14 @@ def load_net():
   
 def obtain_values():
   #select image
-  dd_im = wid.Dropdown(options = images, description='Image') 
+  dd_im = wid.Dropdown(options = images.keys(), description='Image') 
 
   #select weights
   dd_net = wid.Dropdown(options = nets.keys(), description='Model') 
     
   #add standard deviation
   def prepare_values(obj):
-    get_image_trans(nets[dd_net.value], dd_im.value, mean_std = None)
+    get_image_trans(nets[dd_net.value], images[dd_im.value], mean_std = None)
 
   btn = wid.Button(description='Process Image')
   btn.on_click(prepare_values)
