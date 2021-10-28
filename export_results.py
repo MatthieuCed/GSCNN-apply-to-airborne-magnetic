@@ -285,10 +285,6 @@ def clustering_mapping():
 
   #choose cluster type
   drp_clu_typ = wid.Dropdown(options = ['hierarchical clustering', 'k means'], description='Clustering :') 
-  if drp_clu_typ.value == 'hierarchical clustering':
-    hclust, kmean = True, False
-  elif drp_clu_typ.value == 'k means':
-    hclust, kmean = False, True
 
   #choose cluster type
   drp_clu_cmap = wid.Dropdown(options = qualitative, description='Colormap :') 
@@ -316,18 +312,26 @@ def clustering_mapping():
             step=2,
             description='% PCA :',
             value=96)
-  if sld_pca.value == 100:
-    pca=None
-  else:
-    pca=sld_pca.value/100
+
 
   #fonction clustering
   def clustering_fonction(obj):
       clear_output()
       display_menu()
-      print('pca = %s'%pca)
-      print('clu = %s'%drp_clu_typ)
       
+      #define clustering type
+      if drp_clu_typ.value == 'hierarchical clustering':
+          hclust, kmean = True, False
+      elif drp_clu_typ.value == 'k means':
+          hclust, kmean = False, True
+         
+      #define PCA
+      if sld_pca.value == 100:
+          pca=None
+      else:
+          pca=sld_pca.value/100
+
+      #do the clustering
       clustering_output(border = sld_brd.value,
                           res = sld_res.value,
                           lim = pca,
