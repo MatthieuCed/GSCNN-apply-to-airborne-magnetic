@@ -21,12 +21,12 @@ an interface to apply the code to airborne magnetic data is available on [Google
  
  ### Results 
  
- To see the results, open the Results_GSCNN.ipynb
+ To see the results, open the Results_GSCNN.ipynb (google colab)
  Change the path of the files to open, to correspond to yours, copied in a google drive
  
  ### Training
  
- Open run_GSCNN.ipynb
- Change the config.py to correspond to jthe files at your location
+ Open run_GSCNN.ipynb (in google colab)
+ Change the config.py to correspond to the files at your location
  
 
