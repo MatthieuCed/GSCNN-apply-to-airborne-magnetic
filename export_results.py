@@ -14,6 +14,7 @@ import gdown
 import gdal
 import ipywidgets as wid
 from IPython.display import display, clear_output
+import matplotlib.patches as mpatches
 
 import visualize
 import apply
@@ -27,7 +28,10 @@ images = {}
 nets = {}
 
 preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing'}
+
 weight_path = {'weight_syntmag' : 'https://drive.google.com/file/d/1hHFL1Kkex_AdDCHo-Uo0U_kaoBUH0Xsq/view?usp=sharing'}
+
+syntmag_labels = ['Greywackes', 'Dyke', 'Pluton']
 
 qualitative = ['Paired', 'Pastel1', 'Pastel2', 'Accent',
                'Dark2', 'Set1', 'Set2', 'Set3',
@@ -48,15 +52,25 @@ sequential_2 = [
             'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
             'hot', 'afmhot', 'gist_heat', 'copper']
 
-def plot_graphic(image, cmap = 'Paired', vmin = False): 
+def plot_graphic(image, cmap = 'Paired', vmin = False, legend=False, labels=None): 
   plt.figure(figsize=(20, 10), dpi=80)
   lut = len(np.unique(image))
   if lut>30:
     cmap = cm.get_cmap(cmap, lut=lut)
   if type(vmin) is tuple:
-    plt.imshow(np.array(np.flipud(image)), cmap=cmap, vmin=vmin[0], vmax=vmin[1])
+    im = plt.imshow(np.array(np.flipud(image)), cmap=cmap, vmin=vmin[0], vmax=vmin[1])
   else : 
-    plt.imshow(np.array(np.flipud(image)), cmap=cmap)
+    im = plt.imshow(np.array(np.flipud(image)), cmap=cmap)
+    
+  if legend:
+    values = np.unique(image.ravel())
+    #colormap used by imshow
+    colors = [im.cmap(im.norm(value)) for value in values]
+    # create a patch (proxy artist) for every color 
+    patches = [mpatches.Patch(color=colors[i], label=labels[i] ) for i in range(len(values)) ]
+    # put those patched as legend-handles into the legend
+    plt.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0. )
+    
   plt.axis('off')
   plt.show()
   
@@ -302,7 +316,7 @@ def clustering_mapping():
             min=1,
             max=2,
             step=1,
-            description='Resolution :',
+            description='Reduction :',
             value=1)
 
   ##choose PCA
@@ -349,7 +363,7 @@ def clustering_mapping():
       display(wid.HBox([drp_clu_typ, wid.Label(value="choose the clustering algorithm | choisissez l'algorithme de regroupement")]))
       display(wid.HBox([sld_clu, wid.Label(value="choose the number of clusters | choisissez le nombre de groupes")]))
       display(wid.HBox([sld_pca, wid.Label(value="choose PCA reduction [explanation bellow] | choisissez la réduction en PCA [explication ci-dessous]")]))
-      display(wid.HBox([sld_res, wid.Label(value="choose output resolution [explanation bellow] | choisissez la résolution de sortie [explication ci-dessous]")]))
+      display(wid.HBox([sld_res, wid.Label(value="choose output reduction of the resolution [explanation bellow] | choisissez la réduction de la résolution de sortie [explication ci-dessous]")]))
       display(wid.HBox([sld_brd, wid.Label(value="choose the border crop [explanation bellow] | choisissez la réduction des bordures [explication ci-dessous]")]))
       display(wid.HBox([drp_clu_cmap, wid.Label(value="choose the colormap | choisissez la carte des couleurs")]))
       display(btn)
@@ -387,10 +401,15 @@ def display_gscnn_outputs():
     disp = [ch_seg.value, ch_brd.value, ch_g1.value, ch_g2.value, ch_g3.value]
     data = ['_seg.npy', '_edge.npy', '_gate1.npy', '_gate2.npy', '_gate3.npy']
     cmap = [cmap_seg.value, cmap_brd.value, cmap_g1.value, cmap_g2.value, cmap_g3.value]
-    for i, j, k in zip(data, cmap, disp):
+    legend = [True, False, False, False, False]
+
+    if used_net == 'weight_syntmag':
+        labels = [syntmag_labels, None, None, None, None]
+    
+    for i, j, k, l, m in zip(data, cmap, disp, legend, labels):
       if k:
         data_temp = apply.load_npy(i)
-        plot_graphic(data_temp[0], cmap = j)
+        plot_graphic(data_temp[0], cmap = j, legend=l, labels=m)
 
   #button
   btn.on_click(display_outputs)
@@ -477,6 +496,7 @@ def load_net():
   display(btn)
   
 def obtain_values():
+  global used_net
   #select image
   dd_im = wid.Dropdown(options = images.keys(), description='Image') 
 
@@ -485,6 +505,7 @@ def obtain_values():
     
   #add standard deviation
   def prepare_values(obj):
+    used_net = dd_net.value
     get_image_trans(nets[dd_net.value], images[dd_im.value], mean_std = None)
 
   btn = wid.Button(description='Process Image')
