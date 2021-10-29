@@ -26,6 +26,7 @@ from optimizer import restore_snapshot
 
 images = {}
 nets = {}
+used_net = ''
 
 preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing'}
 
@@ -496,7 +497,7 @@ def load_net():
   display(btn)
   
 def obtain_values():
-  global used_net
+  
   #select image
   dd_im = wid.Dropdown(options = images.keys(), description='Image') 
 
