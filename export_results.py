@@ -414,7 +414,7 @@ def display_gscnn_outputs():
     for i, j, k, l, m, n in zip(data, cmap, disp, legend, labels, titles):
       if k:
         data_temp = apply.load_npy(i)
-        plot_graphic(data_temp[0], cmap = j, legend=l, labels=m, titles=n) #test
+        plot_graphic(data_temp[0], cmap = j, legend=l, labels=m, title=n) #test
 
   #button
   btn.on_click(display_outputs)
