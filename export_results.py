@@ -53,7 +53,7 @@ sequential_2 = [
             'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia',
             'hot', 'afmhot', 'gist_heat', 'copper']
 
-def plot_graphic(image, cmap = 'Paired', vmin = False, legend=False, labels=None): 
+def plot_graphic(image, cmap = 'Paired', vmin = False, legend=False, labels=None, title=None): 
   plt.figure(figsize=(20, 10), dpi=80)
   lut = len(np.unique(image))
   if lut>30:
@@ -72,6 +72,9 @@ def plot_graphic(image, cmap = 'Paired', vmin = False, legend=False, labels=None
     # put those patched as legend-handles into the legend
     plt.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0. )
     
+  if type(title) == str:
+      plt.title(title)
+      
   plt.axis('off')
   plt.show()
   
@@ -403,14 +406,15 @@ def display_gscnn_outputs():
     data = ['_seg.npy', '_edge.npy', '_gate1.npy', '_gate2.npy', '_gate3.npy']
     cmap = [cmap_seg.value, cmap_brd.value, cmap_g1.value, cmap_g2.value, cmap_g3.value]
     legend = [True, False, False, False, False]
+    titles = ['Segmentation', 'Borders', 'Gate 1', 'Gate 2', 'Gate 3']
 
     if used_net == 'weight_syntmag':
         labels = [syntmag_labels, None, None, None, None]
     
-    for i, j, k, l, m in zip(data, cmap, disp, legend, labels):
+    for i, j, k, l, m, n in zip(data, cmap, disp, legend, labels, titles):
       if k:
         data_temp = apply.load_npy(i)
-        plot_graphic(data_temp[0], cmap = j, legend=l, labels=m) #test
+        plot_graphic(data_temp[0], cmap = j, legend=l, labels=m, titles=n) #test
 
   #button
   btn.on_click(display_outputs)
