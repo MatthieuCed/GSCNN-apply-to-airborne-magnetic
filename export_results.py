@@ -390,7 +390,7 @@ def display_gscnn_outputs():
 
   #selection outputs
   ch_seg, cmap_seg = create_checkbox_colormap('segmentation', qualitative)
-  ch_brd, cmap_brd = create_checkbox_colormap('borders', ['gray', 'binary'])
+  ch_brd, cmap_brd = create_checkbox_colormap('borders', ['binary', 'gray'])
 
   #selection gate 
   cmap = diverging + pusc + sequential +sequential_2
