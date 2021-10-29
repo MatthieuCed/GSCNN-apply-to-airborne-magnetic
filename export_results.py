@@ -506,6 +506,7 @@ def obtain_values():
     
   #add standard deviation
   def prepare_values(obj):
+    global used_net
     used_net = dd_net.value
     get_image_trans(nets[dd_net.value], images[dd_im.value], mean_std = None)
 
