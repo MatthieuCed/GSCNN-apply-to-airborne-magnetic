@@ -1,7 +1,11 @@
 # GSCNN APPLIED TO MAGNETIC DATA
 
 original code from : https://github.com/nv-tlabs/GSCNN
-(Towaki Takikawa, David Acuna, Varun Jampani, Sanja Fidler : [Paper](https://arxiv.org/abs/1907.05740)])
+(Towaki Takikawa, David Acuna, Varun Jampani, Sanja Fidler : [Paper](https://arxiv.org/abs/1907.05740)]).
+
+The description of our implementation and the data augmentation workflow is available [in Arxiv](http://arxiv.org/abs/2110.14440)
+
+An interface to apply the code to airborne magnetic data is available on [Google Colab](https://colab.research.google.com/drive/1YHyJ1xAbIyEgzEL--srEbJXj-qLMpsgc?usp=sharing)
 
 ### Download datas (pretrained weights and database)
 
@@ -17,12 +21,12 @@ original code from : https://github.com/nv-tlabs/GSCNN
  
  ### Results 
  
- To see the results, open the Results_GSCNN.ipynb
+ To see the results, open the Results_GSCNN.ipynb (google colab)
  Change the path of the files to open, to correspond to yours, copied in a google drive
  
  ### Training
  
- Open run_GSCNN.ipynb
- Change the config.py to correspond to jthe files at your location
+ Open run_GSCNN.ipynb (in google colab)
+ Change the config.py to correspond to the files at your location
  
 
