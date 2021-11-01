@@ -179,6 +179,32 @@ def import_gdown(path, name):
     link = 'https://drive.google.com/uc?id={}'.format(idi)
     gdown.download(link, name, quiet=False)
     
+def clip_data(data, cutoff = 0.3):
+    """
+    fonction np.clip pour enlever les valeurs abhérentes
+    in : data - le jeu de données
+         cutoff - la limite en terme d'écart type multiplié des valeurs abherantes
+    out : data corrigée
+    """
+    #calcul de la moyenne, de la l'écart-type et de la limite de détection
+    X = data[~np.isnan(data)]
+    
+    if type(cutoff)==float:
+        mean = np.mean(X)
+        std = np.std(X)
+        anomal = std * cutoff
+        
+        #calcul des limites inférieure et supérieure
+        lower_lim = mean - anomal
+        upper_lim = mean + anomal
+    elif type(cutoff)==tuple:
+        lower_lim, upper_lim = cutoff
+    
+    # suppression des valeurs au dessus des limites
+    X = np.clip(data, lower_lim, upper_lim)
+      
+    return X
+
 def import_tiff(path, name = 'temp'):
   """
   Fonction pour importer une image .tiff
@@ -193,6 +219,7 @@ def import_tiff(path, name = 'temp'):
   #charger l'image au format tuile 
   image = gdal.Open(name)
   image = image.ReadAsArray()
+  image = clip_data(image, cutoff = (-750, 1500))
 
   #verify it's a 2Dd raster
   if len(image.shape) != 2:
@@ -203,7 +230,6 @@ def import_tiff(path, name = 'temp'):
     raise ValueError('the file contains NoData values')
 
   return image
-
 
 def get_net_use(args):
     print('num class : ', args.dataset_cls.num_classes)
@@ -452,7 +478,6 @@ def import_image(images_in):
 
   def import_image(obj):
     image = import_tiff(image_link.value, name.value)
-    
     #afficher l'image
     clear_output()
     display_menu()
