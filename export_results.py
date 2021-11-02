@@ -67,9 +67,9 @@ def plot_graphic(image, cmap = 'Paired', vmin = False, legend=False, labels=None
   if lut>30:
     cmap = cm.get_cmap(cmap, lut=lut)
   if type(vmin) is tuple:
-    im = plt.imshow(np.array(np.flipud(image)), cmap=cmap, vmin=vmin[0], vmax=vmin[1])
+    im = plt.imshow(np.array(image), cmap=cmap, vmin=vmin[0], vmax=vmin[1])
   else : 
-    im = plt.imshow(np.array(np.flipud(image)), cmap=cmap)
+    im = plt.imshow(np.array(image), cmap=cmap)
     
   if legend:
     values = np.unique(image.ravel())
@@ -96,11 +96,6 @@ def numpy_pil(img, flip=False,norm=True):
   in : img
   out : img PIL
   """
-  #tosup
-  plt.imshow(img)
-  plt.title('numpy_pil')
-  plt.show
-  
   if type(norm) is not tuple: 
     img = (img-img.min())/(img.max()-img.min())
   else:
@@ -119,10 +114,6 @@ def transform_im(img, mean_std = ([0.157, 0.157, 0.157], [0.106, 0.106, 0.106]))
        means_std : ([0.157, 0.157, 0.157], [0.106, 0.106, 0.106])
   out : img torch shape[2,3,x,y]
   """
-  #tosup
-  plt.imshow(img)
-  plt.title('transform_im')
-  plt.show
   
   trans = standard_transforms.Compose([extended_transforms.ToRGB(),
                                       standard_transforms.ToTensor(), #change PIL image H*X*C to torch C*H*W [0. -1.]
@@ -234,12 +225,7 @@ def import_tiff(path, name = 'temp'):
   image = gdal.Open(name)
   image = image.ReadAsArray()
   image = clip_data(image, cutoff = (-750, 1500))
-  
-  #tosup
-  plt.imshow(image)
-  plt.title('import_tiff')
-  plt.show
-  
+    
   #verify it's a 2Dd raster
   if len(image.shape) != 2:
     raise TypeError('the file has to be a 2D rasater file')
@@ -291,11 +277,6 @@ def get_image_trans(net, image, mean_std = None):
       mean = np.mean(image)
       std = np.std(image)
       mean_std = ([mean, mean, mean],[std, std, std])
-
-  #tosup
-  plt.imshow(image)
-  plt.title('get_image_trans')
-  plt.show
   
   img = numpy_pil(image)
   data = transform_im(img, mean_std)
@@ -540,8 +521,8 @@ def import_image(images_in):
             image = resize_image(image, rat)        
     
     #afficher l'image
-    clear_output()
-    display_menu()
+    #clear_output()
+    #display_menu()
     plot_graphic(image, cmap = color_m.value)
     
     #l'enregistrer
