@@ -15,6 +15,8 @@ import gdal
 import ipywidgets as wid
 from IPython.display import display, clear_output
 import matplotlib.patches as mpatches
+import skimage.transform
+from scipy.ndimage import gaussian_filter
 
 import visualize
 import apply
@@ -317,7 +319,24 @@ def clustering_output(border = 16,
 
   plot_graphic(clust.reshape(x, y), cmap = cmap)
   
+def resize_image(im, rat):
+    x, y = im.shape
+    x, y  = int(x*rat), int(y*rat)
+    
+    return skimage.transform.resize(im, (x,y), order=3)
 
+def resize_smooth(im, rat):
+    """
+    Fonction pour mettre les image à une échelle désirée et pour lisser selon 
+    un filtre gaussien
+    in : im - l'image à traiter
+    
+    """    
+    im = resize_image(im, rat)    
+    im = gaussian_filter(im, 1.2)
+    
+    return im 
+  
 def clustering_mapping():
   """
   fonction pour afficher les widgets de la carte par regroupement
@@ -482,8 +501,28 @@ def import_image(images_in):
   cmap = ['jet'] + pusc + diverging + sequential + sequential_2
   color_m = wid.Dropdown(options = cmap, description='Colormap :') 
 
-  def import_image(obj):
+  btn2 = wid.Button(description='Test Image')
+  pre_im = wid.Dropdown(options = preload_image_path.keys(), description='Test Images :') 
+    
+  size = wid.IntText(value=50,
+                        description='Pixel size',
+                        disabled=False)
+  
+  smt = wid.Checkbox(value=False,
+                    description='Smooth',
+                    disabled=False,
+                    indent=False)
+    
+  def import_im(obj):
     image = import_tiff(image_link.value, name.value)
+    rat = size.value/50
+    
+    if rat != 1:
+        if smt.value:
+            image = resize_smooth(image, rat)
+        else:
+            image = resize_image(image, rat)        
+    
     #afficher l'image
     clear_output()
     display_menu()
@@ -491,10 +530,6 @@ def import_image(images_in):
     
     #l'enregistrer
     images[name.value]=image
-
-  btn.on_click(import_image)
-  
-  pre_im = wid.Dropdown(options = preload_image_path.keys(), description='Test Images :') 
   
   def pre_image(obj):
     #change the values
@@ -503,10 +538,10 @@ def import_image(images_in):
     #display menu
     clear_output()
     display_menu()
-    
-  btn2 = wid.Button(description='Test Image')
+      
+  btn.on_click(import_im)
   btn2.on_click(pre_image)
-  
+    
   def display_menu():
       display(wid.Label('Import an image to work on || Importez une image de travail'))
       display(wid.HBox([pre_im, btn2, wid.Label('predefined testing images || images test prédéfinies')]))
@@ -514,6 +549,7 @@ def import_image(images_in):
       display(wid.HBox([image_link, wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image .tiff partagée')]))
       display(wid.HBox([name, wid.Label('Name the image to import || Nommez l\'image à importer')]))
       display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
+      display(wid.HBox([size, smt, wid.Label("magnetic resolution (m) | résolution mangétique (m)")]))
       display(btn)
   
   display_menu()
