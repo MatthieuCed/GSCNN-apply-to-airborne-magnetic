@@ -30,7 +30,7 @@ images = {}
 nets = {}
 used_net = ''
 
-preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing',
+preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1J8UX-fTlHY-NqyF15IYQrfXANHqZJY4H/view?usp=sharing',
                       'malartic' : 'https://drive.google.com/file/d/1UZLueOuQieyl0LN8ZUyK69ktJ0hmCuEV/view?usp=sharing',
                       'val d\'or' : 'https://drive.google.com/file/d/1XJeGl4fjcCBSRdA5NgZnl6OayjBLk4Cu/view?usp=sharing',
                       'ashram' : 'https://drive.google.com/file/d/13hfgcY8f6fScr98VdqSnwdrk53M-cvqT/view?usp=sharing',
