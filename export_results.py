@@ -28,7 +28,13 @@ images = {}
 nets = {}
 used_net = ''
 
-preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing'}
+preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing',
+                      'malartic' : 'https://drive.google.com/file/d/1UZLueOuQieyl0LN8ZUyK69ktJ0hmCuEV/view?usp=sharing',
+                      'val d\'or' : 'https://drive.google.com/file/d/1XJeGl4fjcCBSRdA5NgZnl6OayjBLk4Cu/view?usp=sharing',
+                      'ashram' : 'https://drive.google.com/file/d/13hfgcY8f6fScr98VdqSnwdrk53M-cvqT/view?usp=sharing',
+                      'eleonor' : 'https://drive.google.com/file/d/1a_SEZmH-ddjdUF8mXTa2p1rd-lvrAEjl/view?usp=sharing',
+                      'niobec' : 'https://drive.google.com/file/d/1zPig5w_SvY_VS1XCv_CyF23F5l1c5zWt/view?usp=sharing',
+                      '32A' : 'https://drive.google.com/file/d/1bCapwErTpViVXl-QjqqJAX3tUkqyxBJA/view?usp=sharing'}
 
 weight_path = {'weight_syntmag' : 'https://drive.google.com/file/d/1hHFL1Kkex_AdDCHo-Uo0U_kaoBUH0Xsq/view?usp=sharing'}
 
