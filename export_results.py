@@ -96,15 +96,17 @@ def numpy_pil(img, flip=False,norm=True):
   in : img
   out : img PIL
   """
+  #tosup
+  plt.imshow(img)
+  plt.title('numpy_pil')
+  plt.show
+  
   if type(norm) is not tuple: 
     img = (img-img.min())/(img.max()-img.min())
   else:
     img = (img-norm[0])/(norm[1]-norm[0])
 
   img = (img[:,:]*255).astype(np.uint8)
-  
-  if flip:
-    img = np.flipud(img)
   
   img = Image.fromarray(img)
 
@@ -117,7 +119,11 @@ def transform_im(img, mean_std = ([0.157, 0.157, 0.157], [0.106, 0.106, 0.106]))
        means_std : ([0.157, 0.157, 0.157], [0.106, 0.106, 0.106])
   out : img torch shape[2,3,x,y]
   """
-
+  #tosup
+  plt.imshow(img)
+  plt.title('transform_im')
+  plt.show
+  
   trans = standard_transforms.Compose([extended_transforms.ToRGB(),
                                       standard_transforms.ToTensor(), #change PIL image H*X*C to torch C*H*W [0. -1.]
                                       standard_transforms.Normalize(*mean_std)])
@@ -210,7 +216,7 @@ def clip_data(data, cutoff = 0.3):
     
     # suppression des valeurs au dessus des limites
     X = np.clip(data, lower_lim, upper_lim)
-      
+     
     return X
 
 def import_tiff(path, name = 'temp'):
@@ -228,7 +234,12 @@ def import_tiff(path, name = 'temp'):
   image = gdal.Open(name)
   image = image.ReadAsArray()
   image = clip_data(image, cutoff = (-750, 1500))
-
+  
+  #tosup
+  plt.imshow(image)
+  plt.title('import_tiff')
+  plt.show
+  
   #verify it's a 2Dd raster
   if len(image.shape) != 2:
     raise TypeError('the file has to be a 2D rasater file')
@@ -281,6 +292,11 @@ def get_image_trans(net, image, mean_std = None):
       std = np.std(image)
       mean_std = ([mean, mean, mean],[std, std, std])
 
+  #tosup
+  plt.imshow(image)
+  plt.title('get_image_trans')
+  plt.show
+  
   img = numpy_pil(image)
   data = transform_im(img, mean_std)
 
@@ -549,7 +565,7 @@ def import_image(images_in):
       display(wid.HBox([image_link, wid.Label('Type a shared Google Drive link of the tif image to download here || Lien Google Drive d\'une image .tiff partagée')]))
       display(wid.HBox([name, wid.Label('Name the image to import || Nommez l\'image à importer')]))
       display(wid.HBox([color_m, wid.Label("choose the colormap (display only) | choisissez la couleur de la carte (affichage seulement)")]))
-      display(wid.HBox([size, smt, wid.Label("magnetic resolution (m) | résolution mangétique (m)")]))
+      display(wid.HBox([size, smt, wid.Label("magnetic resolution (m) | résolution levé magnétique (m)")]))
       display(btn)
   
   display_menu()
