@@ -521,8 +521,8 @@ def import_image(images_in):
             image = resize_image(image, rat)        
     
     #afficher l'image
-    #clear_output()
-    #display_menu()
+    clear_output()
+    display_menu()
     plot_graphic(image, cmap = color_m.value)
     
     #l'enregistrer
