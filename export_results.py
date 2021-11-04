@@ -85,7 +85,6 @@ def plot_graphic(image, cmap = 'Paired', vmin = False, legend=False, labels=None
       
   plt.axis('off')
   plt.show()
-  
 
 #emplacement ou mettre les fichiers temporaires
 # path_s = '/content/gdrive/My Drive/mira_project'
@@ -482,15 +481,15 @@ def display_gscnn_outputs():
 def import_image(images_in):  
     
   btn = wid.Button(description='Get Image')
-
+ 
   image_link = wid.Textarea(
-      value='https://drive.google.com/file/d/1qRh2NO2JIwjFJg2eJb9olg7pN8iHV1fd/view?usp=sharing',
+      value='https://drive.google.com/file/d/1J8UX-fTlHY-NqyF15IYQrfXANHqZJY4H/view?usp=sharing',
       placeholder='right the google drive link of the image you want to load',
       description='GDrive link:',
       disabled=False)
 
   name = wid.Textarea(
-      value='original',
+      value='malartic_synt',
       placeholder='Name your image',
       description='image name',
       disabled=False)
