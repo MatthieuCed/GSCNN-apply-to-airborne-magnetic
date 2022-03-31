@@ -5,7 +5,7 @@ original code from : https://github.com/nv-tlabs/GSCNN
 
 The description of our implementation and the data augmentation workflow is available [in Arxiv](http://arxiv.org/abs/2110.14440)
 
-An interface to apply the code to airborne magnetic data is available on [Google Colab](https://drive.google.com/file/d/1VWQ1Z5YMi21yBDcxn5vXQ0r9aFjO-kjC/view?usp=sharing)
+An interface to apply the code to airborne magnetic data is available on [Google Colab](https://colab.research.google.com/github/MatthieuCed/GSCNN-apply-to-airborne-magnetic/blob/main/Preliminary_Mapping_GSCNN.ipynb)
 
 ### Download datas (pretrained weights and database)
 
