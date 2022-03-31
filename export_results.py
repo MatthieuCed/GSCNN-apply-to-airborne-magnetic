@@ -38,7 +38,7 @@ preload_image_path = {'malartic_synt' : 'https://drive.google.com/file/d/1J8UX-f
                       'niobec' : 'https://drive.google.com/file/d/1zPig5w_SvY_VS1XCv_CyF23F5l1c5zWt/view?usp=sharing',
                       '32A' : 'https://drive.google.com/file/d/1bCapwErTpViVXl-QjqqJAX3tUkqyxBJA/view?usp=sharing'}
 
-weight_path = {'weight_syntmag' : 'https://drive.google.com/file/d/1hHFL1Kkex_AdDCHo-Uo0U_kaoBUH0Xsq/view?usp=sharing'}
+weight_path = {'weight_syntmag' : 'https://drive.google.com/file/d/1Rcps0jVtLgHVApWZ5zXETDxo9v6RDhIF/view?usp=sharing'}
 
 syntmag_labels = ['Greywackes', 'Dyke', 'Pluton']
 
