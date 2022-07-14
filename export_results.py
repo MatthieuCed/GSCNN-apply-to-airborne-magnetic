@@ -17,6 +17,8 @@ from IPython.display import display, clear_output
 import matplotlib.patches as mpatches
 import skimage.transform
 from scipy.ndimage import gaussian_filter
+import rioxarray as rxr
+from google.colab import files
 
 import visualize
 import apply
@@ -27,6 +29,7 @@ from datasets import syntmag
 from optimizer import restore_snapshot
 
 images = {}
+rasters = {}
 nets = {}
 used_net = ''
 
@@ -221,8 +224,8 @@ def import_tiff(path, name = 'temp'):
   import_gdown(path, name)
   
   #charger l'image au format tuile 
-  image = gdal.Open(name)
-  image = image.ReadAsArray()
+  image_r = rxr.open_rasterio(name, masked=True)[0]
+  image = np.array(image_r)
   image = clip_data(image, cutoff = (-750, 1500))
     
   #verify it's a 2Dd raster
@@ -233,7 +236,7 @@ def import_tiff(path, name = 'temp'):
   if np.isnan(image).any() :
     raise ValueError('the file contains NoData values')
 
-  return image
+  return image, image_r
 
 def get_net_use(args):
     print('num class : ', args.dataset_cls.num_classes)
@@ -292,7 +295,8 @@ def clustering_output(border = 16,
                       cmap = 'tab20',
                       n_clusters = 8,
                       hclust = False,
-                      kmean = True):
+                      kmean = True,
+                      save=False):
   """
   fonction pour faire un clsutering
   """
@@ -313,13 +317,33 @@ def clustering_output(border = 16,
                                         lim=lim,
                                         res=res)
 
-  plot_graphic(clust.reshape(x, y), cmap = cmap)
-  
-def resize_image(im, rat):
+  temp_clust = clust.reshape(x,y)
+  plot_graphic(temp_clust, cmap = cmap)
+  if save:
+    temp_clust = resize_image(temp_clust, 2, order=0, preserve_range=True, anti_aliasing=False).astype(np.uint8)#because output always scaled by 2
+    if res!=1:
+        #change image if res applied
+        temp_clust = resize_image(temp_clust, res, order=0, preserve_range=True, anti_aliasing=False).astype(np.uint8)
+    empty_array = np.empty((temp_clust.shape[0]+border*2, temp_clust.shape[1]+border*2))
+    empty_array[:]=np.nan
+    empty_array[border:-border, border:-border]=temp_clust
+    
+    #if the same are not the same, reshape
+    if empty_array.shape != image_rxa.shape:
+        empty_array =   skimage.transform.resize(temp_clust, image_rxa.shape, order=0, preserve_range=True, anti_aliasing=False).astype(np.uint8)
+    
+    #save the image 
+    image_temp = image_rxa.copy()
+    image_temp.values = empty_array.astype(float)
+    temp_name = "%s_clustering_%s.tif"%(name_rxa, n_clusters)
+    image_temp.rio.to_raster(temp_name)
+    files.download(temp_name)
+          
+def resize_image(im, rat, order=3, preserve_range=True, anti_aliasing=True):
     x, y = im.shape
     x, y  = int(x*rat), int(y*rat)
     
-    return skimage.transform.resize(im, (x,y), order=3)
+    return skimage.transform.resize(im, (x,y), order=order, preserve_range=preserve_range, anti_aliasing=anti_aliasing)
 
 def resize_smooth(im, rat):
     """
@@ -377,6 +401,9 @@ def clustering_mapping():
             step=2,
             description='% PCA :',
             value=96)
+  
+  #save
+  ch_sv = wid.Checkbox(value=False, description='save', disabled = False, indent=False)
 
 
   #fonction clustering
@@ -403,7 +430,8 @@ def clustering_mapping():
                           cmap = drp_clu_cmap.value,
                           n_clusters = sld_clu.value,
                           hclust = hclust,
-                          kmean = kmean)
+                          kmean = kmean,
+                          save = ch_sv.value)
 
   #action du boutton
   btn.on_click(clustering_fonction)
@@ -417,6 +445,7 @@ def clustering_mapping():
       display(wid.HBox([sld_res, wid.Label(value="choose output reduction of the resolution [explanation bellow] | choisissez la réduction de la résolution de sortie [explication ci-dessous]")]))
       display(wid.HBox([sld_brd, wid.Label(value="choose the border crop [explanation bellow] | choisissez la réduction des bordures [explication ci-dessous]")]))
       display(wid.HBox([drp_clu_cmap, wid.Label(value="choose the colormap | choisissez la carte des couleurs")]))
+      display(wid.HBox([ch_sv, wid.Label(value='save the displayed file | sauvegarder le fichier affiché')]))
       display(btn)
 
   display_menu()
@@ -444,6 +473,9 @@ def display_gscnn_outputs():
   ch_g1, cmap_g1 = create_checkbox_colormap('gate 1', cmap)
   ch_g2, cmap_g2 = create_checkbox_colormap('gate 2', cmap)
   ch_g3, cmap_g3 = create_checkbox_colormap('gate 3', cmap)
+  
+  #save image
+  ch_sv = wid.Checkbox(value=False, description='save', disabled = False, indent=False)
 
   def display_outputs(obj): 
     clear_output()
@@ -457,11 +489,28 @@ def display_gscnn_outputs():
 
     if used_net == 'weight_syntmag':
         labels = [syntmag_labels, None, None, None, None]
+    else:
+        raise AssertionError('a model has to be loaded')
     
     for i, j, k, l, m, n in zip(data, cmap, disp, legend, labels, titles):
       if k:
         data_temp = apply.load_npy(i)
         plot_graphic(data_temp[0], cmap = j, legend=l, labels=m, title=n) #test
+        if ch_sv.value:
+            image_temp = image_rxa.copy()
+            
+            #if the same are not the same, reshape
+            if data_temp[0].shape != image_rxa.shape:
+                if i=='_seg.npy':
+                    temp = skimage.transform.resize(data_temp[0], image_rxa.shape, order=0, preserve_range=True, anti_aliasing=False).astype(np.uint8)
+                else:    
+                    temp = skimage.transform.resize(data_temp[0], image_rxa.shape, order=3)
+                    
+            image_temp.values = temp.astype(float)
+            temp_name = "%s%s.tif"%(name_rxa, i.split('.')[0])
+            image_temp.rio.to_raster(temp_name)
+            files.download(temp_name)
+            
 
   #button
   btn.on_click(display_outputs)
@@ -475,6 +524,7 @@ def display_gscnn_outputs():
     display(wid.HBox([ch_g1, cmap_g1]))
     display(wid.HBox([ch_g2, cmap_g2]))
     display(wid.HBox([ch_g3, cmap_g3]))
+    display(wid.HBox([ch_sv, wid.Label(value='save displayed files | sauvegarder les fichiers affichés')]))
     display(btn)
   display_menu()
   
@@ -510,7 +560,7 @@ def import_image(images_in):
                     indent=False)
     
   def import_im(obj):
-    image = import_tiff(image_link.value, name.value)
+    image, image_r = import_tiff(image_link.value, name.value)
     rat = size.value/50
     
     if rat != 1:
@@ -518,7 +568,7 @@ def import_image(images_in):
             image = resize_smooth(image, rat)
         else:
             image = resize_image(image, rat)        
-    
+            
     #afficher l'image
     clear_output()
     display_menu()
@@ -526,6 +576,7 @@ def import_image(images_in):
     
     #l'enregistrer
     images[name.value]=image
+    rasters[name.value]=image_r
   
   def pre_image(obj):
     #change the values
@@ -573,8 +624,9 @@ def obtain_values():
     
   #add standard deviation
   def prepare_values(obj):
-    global used_net
+    global used_net, image_rxa, name_rxa
     used_net = dd_net.value
+    image_rxa, name_rxa = rasters[dd_im.value], dd_im.value
     get_image_trans(nets[dd_net.value], images[dd_im.value], mean_std = None)
 
   btn = wid.Button(description='Process Image')
