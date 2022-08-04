@@ -224,10 +224,11 @@ def import_tiff(path, name = 'temp'):
   import_gdown(path, name)
   
   #charger l'image au format tuile 
-  image_r = rxr.open_rasterio(name, masked=True)[0]
+  image_r = rxr.open_rasterio(name)[0]
   image = np.array(image_r)
   image = clip_data(image, cutoff = (-750, 1500))
-    
+  
+  
   #verify it's a 2Dd raster
   if len(image.shape) != 2:
     raise TypeError('the file has to be a 2D rasater file')
